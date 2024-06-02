@@ -4,20 +4,22 @@ const Banner = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="hero min-h-screen bg-base-200">
+    <div className="hero min-h-[80vh] bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <img
           src="https://i.ibb.co/r27Gj76/blood-and-bleeding.jpg"
-          className="max-w-sm rounded-lg shadow-2xl"
+          className="max-w-xs md:max-w-sm rounded-lg shadow-2xl"
         />
         <div>
-          <h1 className="text-5xl font-bold">Save a Life, Donate Blood</h1>
-          <p className="py-6">
+          <h1 className="text-5xl font-bold text-center md:text-start">
+            Save a Life, Donate Blood
+          </h1>
+          <p className="py-6 text-center md:text-start">
             Learn how your blood donation can help people in need, including
             those undergoing surgeries, battling illnesses, and experiencing
             accidents.
           </p>
-          <div className="space-x-8">
+          <div className="space-x-8 text-center md:text-start">
             <button
               onClick={() => navigate("/register")}
               className="btn btn-primary"
