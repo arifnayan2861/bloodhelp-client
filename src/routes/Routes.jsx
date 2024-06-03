@@ -9,6 +9,8 @@ import UserProfile from "../pages/Dashboard/UserProfile/UserProfile";
 import PrivateRoute from "./PrivateRoute";
 import CreateDonationRequest from "../pages/Dashboard/CreateDonationRequest/CreateDonationRequest";
 import UserHome from "../pages/Dashboard/UserHome/UserHome";
+import MyDonationRequest from "../pages/Dashboard/MyDonationRequest/MyDonationRequest";
+import EditDonationRequest from "../pages/Dashboard/EditDonationRequest/EditDonationRequest";
 
 const routes = createBrowserRouter([
   {
@@ -38,6 +40,22 @@ const routes = createBrowserRouter([
         element: (
           <PrivateRoute>
             <UserHome />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "edit-donation-request/:id",
+        element: (
+          <PrivateRoute>
+            <EditDonationRequest />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "my-donation-requests",
+        element: (
+          <PrivateRoute>
+            <MyDonationRequest />
           </PrivateRoute>
         ),
       },

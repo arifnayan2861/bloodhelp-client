@@ -1,31 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+// import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
 
-const UserHome = () => {
+const MyDonationRequest = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
-  const navigate = useNavigate();
+  //   const navigate = useNavigate();
   const [donationRequests, setDonationRequests] = useState([]);
   //   const queryClient = useQueryClient();
 
-  //   const {
-  //     data: requests = [],
-  //     refetch,
-  //     isLoading,
-  //   } = useQuery({
-  //     queryKey: ["donationRequests", user?.email],
-  //     queryFn: async () => {
-  //       const res = await axiosPublic.get(`/donation-requests/${user?.email}`);
-  //       return res.data;
-  //     },
-  //     onSuccess: (data) => {
-  //       setDonationRequests(data.slice(0, 3));
-  //     },
-  //   });
+  const { data: requests = [], refetch } = useQuery({
+    queryKey: ["donationRequests", user?.email],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/donation-requests/${user?.email}`);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      setDonationRequests(data.slice(0, 3));
+    },
+  });
 
   useEffect(() => {
     axiosPublic
@@ -34,60 +32,31 @@ const UserHome = () => {
       .catch((err) => console.log(err));
   }, [axiosPublic, user]);
 
-  //   const updateStatusMutation = useMutation(
-  //     ({ id, status }) =>
-  //       axiosPublic.patch(`/donation-request/${id}`, { status }),
-  //     {
-  //       onSuccess: () => {
-  //         queryClient.invalidateQueries(["donationRequests", user?.email]);
-  //         toast.success("Status updated successfully");
-  //       },
-  //       onError: () => {
-  //         toast.error("Failed to update status");
-  //       },
-  //     }
-  //   );
-
-  //   const deleteMutation = useMutation(
-  //     (id) => axiosPublic.delete(`/donation-request/${id}`),
-  //     {
-  //       onSuccess: () => {
-  //         queryClient.invalidateQueries(["donationRequests", user?.email]);
-  //         toast.success("Request deleted successfully");
-  //       },
-  //       onError: () => {
-  //         toast.error("Failed to delete request");
-  //       },
-  //     }
-  //   );
-
-  //   const handleUpdateStatus = (id, status) => {
-  //     updateStatusMutation.mutate({ id, status });
-  //   };
-
-  //   const handleDelete = (id) => {
-  //     if (window.confirm("Are you sure you want to delete this request?")) {
-  //       deleteMutation.mutate(id);
-  //     }
-  //   };
-
-  //   const handleEdit = (id) => {
-  //     navigate(`/edit-donation-request/${id}`);
-  //   };
-
-  //   const handleView = (id) => {
-  //     navigate(`/donation-request/${id}`);
-  //   };
-
-  //   if (isLoading) {
-  //     return (
-  //       <div className="flex justify-center items-center">
-  //         <span className="loading loading-spinner loading-lg"></span>
-  //       </div>
-  //     );
-  //   }
-
-  console.log(donationRequests);
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await axiosPublic.delete(`/donation-request/${id}`);
+        if (res.data.deletedCount > 0) {
+          refetch();
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your request has been deleted.",
+            icon: "success",
+          });
+          //   toast.success("Request deleted successfully!");
+        }
+        console.log(res);
+      }
+    });
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -144,17 +113,13 @@ const UserHome = () => {
                     )}
                     <button
                       className="btn btn-warning"
-                      onClick={() =>
-                        navigate(
-                          `/dashboard/edit-donation-request/${request._id}`
-                        )
-                      }
+                      //   onClick={() => handleEdit(request._id)}
                     >
                       Edit
                     </button>
                     <button
                       className="btn btn-error"
-                      //   onClick={() => handleDelete(request._id)}
+                      onClick={() => handleDelete(request._id)}
                     >
                       Delete
                     </button>
@@ -169,18 +134,10 @@ const UserHome = () => {
               ))}
             </tbody>
           </table>
-          <div className="mt-4">
-            <button
-              className="btn btn-primary"
-              onClick={() => navigate("/my-donation-requests")}
-            >
-              View My All Requests
-            </button>
-          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default UserHome;
+export default MyDonationRequest;
