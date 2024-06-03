@@ -81,7 +81,7 @@ const Navbar = () => {
               onClick={() => setDropdown(false)}
               className="bg-base-200 w-36 h-48 absolute top-11 z-10 rounded-lg"
             >
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/dashboard/profile">Dashboard</Link>
               <button onClick={handleLogOut} className="btn">
                 Logout
               </button>
