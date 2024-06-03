@@ -74,9 +74,9 @@ const Dashboard = () => {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/dashboard/history">
+                  <NavLink to="/dashboard/create-donation-request">
                     <FaCalendar></FaCalendar>
-                    Not History
+                    Create Donation Request
                   </NavLink>
                 </li>
                 <li>
