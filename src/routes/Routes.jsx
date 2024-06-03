@@ -11,6 +11,7 @@ import CreateDonationRequest from "../pages/Dashboard/CreateDonationRequest/Crea
 import UserHome from "../pages/Dashboard/UserHome/UserHome";
 import MyDonationRequest from "../pages/Dashboard/MyDonationRequest/MyDonationRequest";
 import EditDonationRequest from "../pages/Dashboard/EditDonationRequest/EditDonationRequest";
+import AdminHome from "../pages/Admin/AdminHome/AdminHome";
 
 const routes = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ const routes = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
     children: [
+      //normal user routes
       {
         path: "userHome",
         element: (
@@ -72,6 +74,15 @@ const routes = createBrowserRouter([
         element: (
           <PrivateRoute>
             <CreateDonationRequest />
+          </PrivateRoute>
+        ),
+      },
+      //admin routes
+      {
+        path: "adminHome",
+        element: (
+          <PrivateRoute>
+            <AdminHome />
           </PrivateRoute>
         ),
       },

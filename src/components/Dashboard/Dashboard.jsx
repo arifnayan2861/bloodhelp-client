@@ -13,9 +13,22 @@ import {
   FaAlignJustify,
 } from "react-icons/fa";
 import { NavLink, Outlet } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
+import useAuth from "../../hooks/useAuth";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const Dashboard = () => {
-  const isAdmin = false;
+  const { user } = useAuth();
+  const axiosPublic = useAxiosPublic();
+
+  const { data: userInfo } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/user/${user?.email}`);
+      return res.data;
+    },
+  });
   const [sidebar, setSidebar] = useState(false);
   return (
     <div className="flex">
@@ -32,7 +45,7 @@ const Dashboard = () => {
             <FaAlignJustify size={30} className="mt-10 ml-7" />
           </div> */}
           <ul className="menu px-4 pt-20">
-            {isAdmin ? (
+            {userInfo.role === "admin" ? (
               <>
                 <li>
                   <NavLink to="/dashboard/adminHome">
@@ -83,18 +96,6 @@ const Dashboard = () => {
                   <NavLink to="/dashboard/my-donation-requests">
                     <FaShoppingCart></FaShoppingCart>
                     My Donation Requests
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/review">
-                    <FaAd></FaAd>
-                    Add a Review
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/paymentHistory">
-                    <FaList></FaList>
-                    Real Payment History
                   </NavLink>
                 </li>
               </>
