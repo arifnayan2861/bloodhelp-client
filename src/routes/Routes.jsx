@@ -17,6 +17,7 @@ import AdminRoute from "./AdminRoute";
 import AllBloodDonationRequests from "../pages/Admin/AllBloodDonationRequests/AllBloodDonationRequests";
 import ContentManagement from "../pages/Admin/ContentManagement/ContentManagement";
 import AddBlog from "../pages/Admin/AddBlog/AddBlog";
+import VolunteerHome from "../pages/Volunteer/VolunteerHome/VolunteerHome";
 
 const routes = createBrowserRouter([
   {
@@ -121,6 +122,15 @@ const routes = createBrowserRouter([
           <AdminRoute>
             <AddBlog />
           </AdminRoute>
+        ),
+      },
+      //volunteer routes
+      {
+        path: "donorHome",
+        element: (
+          <PrivateRoute>
+            <VolunteerHome />
+          </PrivateRoute>
         ),
       },
     ],

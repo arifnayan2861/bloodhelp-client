@@ -52,7 +52,7 @@ const Dashboard = () => {
             <FaAlignJustify size={30} className="mt-10 ml-7" />
           </div> */}
           <ul className="menu px-4 pt-20">
-            {isAdmin ? (
+            {userInfo.role === "admin" ? (
               <>
                 <li>
                   <NavLink to="/dashboard/adminHome">
@@ -79,7 +79,7 @@ const Dashboard = () => {
                   </NavLink>
                 </li>
               </>
-            ) : (
+            ) : userInfo.role === "donor" ? (
               <>
                 <li>
                   <NavLink to="/dashboard/userHome">
@@ -97,6 +97,15 @@ const Dashboard = () => {
                   <NavLink to="/dashboard/my-donation-requests">
                     <FaShoppingCart></FaShoppingCart>
                     My Donation Requests
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <NavLink to="/dashboard/donorHome">
+                    <FaHome></FaHome>
+                    Volunteer Home
                   </NavLink>
                 </li>
               </>
