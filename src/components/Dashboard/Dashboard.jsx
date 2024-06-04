@@ -17,12 +17,14 @@ import { useQuery } from "@tanstack/react-query";
 
 import useAuth from "../../hooks/useAuth";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
+import useAdmin from "../../hooks/useAdmin";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
+  const [isAdmin] = useAdmin();
 
-  const { data: userInfo } = useQuery({
+  const { data: userInfo, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const res = await axiosPublic.get(`/user/${user?.email}`);
@@ -30,6 +32,13 @@ const Dashboard = () => {
     },
   });
   const [sidebar, setSidebar] = useState(false);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
   return (
     <div className="flex">
       <div
@@ -45,7 +54,7 @@ const Dashboard = () => {
             <FaAlignJustify size={30} className="mt-10 ml-7" />
           </div> */}
           <ul className="menu px-4 pt-20">
-            {userInfo.role === "admin" ? (
+            {isAdmin ? (
               <>
                 <li>
                   <NavLink to="/dashboard/adminHome">
