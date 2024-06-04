@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  FaAd,
   FaBook,
   FaCalendar,
   FaEnvelope,
@@ -8,7 +7,6 @@ import {
   FaList,
   FaSearch,
   FaShoppingCart,
-  FaUsers,
   FaUtensils,
   FaAlignJustify,
 } from "react-icons/fa";
@@ -75,15 +73,9 @@ const Dashboard = () => {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/dashboard/bookings">
+                  <NavLink to="/dashboard/content-management">
                     <FaBook></FaBook>
-                    Manage Bookings
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/users">
-                    <FaUsers></FaUsers>
-                    All Users
+                    Manage contents
                   </NavLink>
                 </li>
               </>
