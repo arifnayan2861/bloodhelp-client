@@ -14,6 +14,7 @@ import EditDonationRequest from "../pages/Dashboard/EditDonationRequest/EditDona
 import AdminHome from "../pages/Admin/AdminHome/AdminHome";
 import AllUsers from "../pages/Admin/AllUsers/AllUsers";
 import AdminRoute from "./AdminRoute";
+import AllBloodDonationRequests from "../pages/Admin/AllBloodDonationRequests/AllBloodDonationRequests";
 
 const routes = createBrowserRouter([
   {
@@ -93,6 +94,14 @@ const routes = createBrowserRouter([
         element: (
           <AdminRoute>
             <AllUsers />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "all-blood-donation-requests",
+        element: (
+          <AdminRoute>
+            <AllBloodDonationRequests />
           </AdminRoute>
         ),
       },
