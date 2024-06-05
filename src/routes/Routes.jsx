@@ -19,6 +19,7 @@ import ContentManagement from "../pages/Admin/ContentManagement/ContentManagemen
 import AddBlog from "../pages/Admin/AddBlog/AddBlog";
 import VolunteerHome from "../pages/Volunteer/VolunteerHome/VolunteerHome";
 import VolunteerAllBloodDonationRequests from "../pages/Volunteer/AllBloodDonationRequests/VolunteerAllBloodDonationRequests";
+import VolunteerContentManagement from "../pages/Volunteer/ContentManagement/VolunteerContentManagement";
 
 const routes = createBrowserRouter([
   {
@@ -139,6 +140,14 @@ const routes = createBrowserRouter([
         element: (
           <PrivateRoute>
             <VolunteerAllBloodDonationRequests />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "volunteer/content-management",
+        element: (
+          <PrivateRoute>
+            <VolunteerContentManagement />
           </PrivateRoute>
         ),
       },

@@ -114,6 +114,12 @@ const Dashboard = () => {
                     Blood Donation Requests
                   </NavLink>
                 </li>
+                <li>
+                  <NavLink to="/dashboard/volunteer/content-management">
+                    <FaList></FaList>
+                    Content Management
+                  </NavLink>
+                </li>
                 {/*  */}
               </>
             )}
