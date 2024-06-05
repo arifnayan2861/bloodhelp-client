@@ -2,23 +2,37 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 import useAuth from "../../hooks/useAuth";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+import { useQuery } from "@tanstack/react-query";
 
 const Navbar = () => {
   const { user, logoutUser } = useAuth();
+  const axiosPublic = useAxiosPublic();
   const [dropdown, setDropdown] = useState(false);
+
+  const { data: userInfo, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/user/${user?.email}`);
+      return res.data;
+    },
+  });
   const navLinks = (
     <>
       <li>
-        <Link to="/request-donation">Request Donation</Link>
+        <Link to="/request-donation">Donation Requests</Link>
       </li>
       <li>
-        <Link to="/blog">Blog</Link>
+        <Link to="/blogs">Blogs</Link>
       </li>
       {user && (
         <li>
           <Link to="/fundings">Fundings</Link>
         </li>
       )}
+      <li>
+        <Link to="/search">Search</Link>
+      </li>
     </>
   );
   const handleLogOut = () => {
@@ -26,7 +40,14 @@ const Navbar = () => {
       .then(() => {})
       .catch((error) => console.log(error));
   };
-  console.log(dropdown);
+  // console.log(dropdown);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
   return (
     <div className="my-6 mx-6 lg:mx-18">
       <div className="navbar bg-base-100">
@@ -79,10 +100,24 @@ const Navbar = () => {
           {dropdown && (
             <div
               onClick={() => setDropdown(false)}
-              className="bg-base-200 w-36 h-48 absolute top-11 z-10 rounded-lg"
+              className="bg-base-200 w-36 h-48 absolute top-11 z-10 rounded-lg flex flex-col justify-evenly items-center"
             >
-              <Link to="/dashboard/profile">Dashboard</Link>
-              <button onClick={handleLogOut} className="btn">
+              <Link
+                className="btn btn-outline btn-success"
+                to={`/dashboard/${
+                  userInfo.role === "admin"
+                    ? "adminHome"
+                    : userInfo.role === "donor"
+                    ? "userHome"
+                    : "volunteerHome"
+                }`}
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogOut}
+                className="btn btn-outline btn-error"
+              >
                 Logout
               </button>
             </div>
