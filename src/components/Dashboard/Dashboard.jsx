@@ -1,26 +1,26 @@
 import { useState } from "react";
 import {
+  FaUser,
   FaBook,
-  FaCalendar,
-  FaEnvelope,
   FaHome,
   FaList,
   FaSearch,
-  FaShoppingCart,
-  FaUtensils,
+  FaMoneyCheck,
   FaAlignJustify,
+  FaUserPlus,
 } from "react-icons/fa";
-import { NavLink, Outlet } from "react-router-dom";
+import { FaDroplet, FaHandHoldingDroplet } from "react-icons/fa6";
+import { Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import useAuth from "../../hooks/useAuth";
 import useAxiosPublic from "../../hooks/useAxiosPublic";
-import useAdmin from "../../hooks/useAdmin";
+import logo from "../../../public/logo.jpeg";
+import DashBoardMenu from "./DashBoardMenu";
 
 const Dashboard = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
-  const [isAdmin] = useAdmin();
 
   const { data: userInfo, isLoading } = useQuery({
     queryKey: ["user"],
@@ -29,7 +29,51 @@ const Dashboard = () => {
       return res.data;
     },
   });
-  const [sidebar, setSidebar] = useState(false);
+  const [open, setOpen] = useState(true);
+  const adminMenu = [
+    { title: "Admin Home", logo: <FaHome />, path: "/dashboard/adminHome" },
+    { title: "All Users", logo: <FaUser />, path: "/dashboard/all-users" },
+    {
+      title: "Blood Donation Requests",
+      logo: <FaDroplet />,
+      path: "/dashboard/all-blood-donation-requests",
+    },
+    {
+      title: "Manage contents",
+      logo: <FaList />,
+      path: "/dashboard/content-management",
+    },
+  ];
+  const donorMenu = [
+    { title: "Donor Home", logo: <FaHome />, path: "/dashboard/userHome" },
+    {
+      title: "Create Donation Request",
+      logo: <FaUserPlus />,
+      path: "/dashboard/create-donation-request",
+    },
+    {
+      title: "My Donation Requests",
+      logo: <FaHandHoldingDroplet />,
+      path: "/dashboard/my-donation-requests",
+    },
+  ];
+  const volunteerMenu = [
+    {
+      title: "Volunteer Home",
+      logo: <FaHome />,
+      path: "/dashboard/volunteerHome",
+    },
+    {
+      title: "Blood Donation Requests",
+      logo: <FaDroplet />,
+      path: "/dashboard/volunteer/all-blood-donation-requests",
+    },
+    {
+      title: "Manage contents",
+      logo: <FaList />,
+      path: "/dashboard/volunteer/content-management",
+    },
+  ];
   if (isLoading) {
     return (
       <div className="flex justify-center items-center">
@@ -40,114 +84,85 @@ const Dashboard = () => {
   return (
     <div className="flex">
       <div
-        className="absolute block md:hidden"
-        onClick={() => setSidebar(!sidebar)}
+        className={` ${
+          open ? "w-72" : "w-20 "
+        } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
       >
-        <FaAlignJustify size={30} className="mt-7 ml-7" />
-      </div>
-      {/* dashboard side bar */}
-      {sidebar && (
-        <div className="w-64 min-h-screen bg-orange-400 md:block">
-          {/* <div onClick={() => setSidebar(false)}>
-            <FaAlignJustify size={30} className="mt-10 ml-7" />
-          </div> */}
-          <ul className="menu px-4 pt-20">
-            {userInfo.role === "admin" ? (
-              <>
-                <li>
-                  <NavLink to="/dashboard/adminHome">
-                    <FaHome></FaHome>
-                    Admin Home
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/all-users">
-                    <FaUtensils></FaUtensils>
-                    All Users
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/all-blood-donation-requests">
-                    <FaList></FaList>
-                    Blood Donation Requests
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/content-management">
-                    <FaBook></FaBook>
-                    Manage contents
-                  </NavLink>
-                </li>
-              </>
-            ) : userInfo.role === "donor" ? (
-              <>
-                <li>
-                  <NavLink to="/dashboard/userHome">
-                    <FaHome></FaHome>
-                    User Home
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/create-donation-request">
-                    <FaCalendar></FaCalendar>
-                    Create Donation Request
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/my-donation-requests">
-                    <FaShoppingCart></FaShoppingCart>
-                    My Donation Requests
-                  </NavLink>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <NavLink to="/dashboard/volunteerHome">
-                    <FaHome></FaHome>
-                    Volunteer Home
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/volunteer/all-blood-donation-requests">
-                    <FaList></FaList>
-                    Blood Donation Requests
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/dashboard/volunteer/content-management">
-                    <FaList></FaList>
-                    Content Management
-                  </NavLink>
-                </li>
-                {/*  */}
-              </>
-            )}
-            {/* shared nav links */}
-            <div className="divider"></div>
-            <li>
-              <NavLink to="/">
-                <FaHome></FaHome>
-                Home
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/order/salad">
-                <FaSearch></FaSearch>
-                Menu
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/order/contact">
-                <FaEnvelope></FaEnvelope>
-                Contact
-              </NavLink>
-            </li>
-          </ul>
+        <FaAlignJustify
+          size={20}
+          onClick={() => setOpen(!open)}
+          className={`absolute cursor-pointer -right-3 top-9 w-7 ${
+            !open && "rotate-180"
+          }`}
+        />
+
+        <div className="flex gap-x-4 items-center">
+          <img
+            src={logo}
+            className={`cursor-pointer w-10 h-10 -mt-2 duration-500 ${
+              open && "rotate-[360deg]"
+            }`}
+          />
         </div>
-      )}
-      {/* dashboard content */}
-      <div className="flex-1 p-8">
+        <ul className="pt-6">
+          {userInfo.role === "admin"
+            ? adminMenu.map((menu, index) => (
+                <DashBoardMenu
+                  key={index}
+                  path={menu.path}
+                  logo={menu.logo}
+                  title={menu.title}
+                  open={open}
+                />
+              ))
+            : userInfo.role === "donor"
+            ? donorMenu.map((menu, index) => (
+                <DashBoardMenu
+                  key={index}
+                  path={menu.path}
+                  logo={menu.logo}
+                  title={menu.title}
+                  open={open}
+                />
+              ))
+            : volunteerMenu.map((menu, index) => (
+                <DashBoardMenu
+                  key={index}
+                  path={menu.path}
+                  logo={menu.logo}
+                  title={menu.title}
+                  open={open}
+                />
+              ))}
+          <div className="divider"></div>
+          <DashBoardMenu path="/" logo=<FaHome /> title="Home" open={open} />
+          <DashBoardMenu
+            path="/donation-requests"
+            logo=<FaHandHoldingDroplet />
+            title="Donation Requests"
+            open={open}
+          />
+          <DashBoardMenu
+            path="/blogs"
+            logo=<FaBook />
+            title="Blogs"
+            open={open}
+          />
+          <DashBoardMenu
+            path="/funding"
+            logo=<FaMoneyCheck />
+            title="Funding"
+            open={open}
+          />
+          <DashBoardMenu
+            path="/search"
+            logo=<FaSearch />
+            title="Search"
+            open={open}
+          />
+        </ul>
+      </div>
+      <div className="flex-1 mx-1 md:mx-10 mt-6">
         <Outlet></Outlet>
       </div>
     </div>
