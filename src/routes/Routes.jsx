@@ -20,6 +20,7 @@ import AddBlog from "../pages/Admin/AddBlog/AddBlog";
 import VolunteerHome from "../pages/Volunteer/VolunteerHome/VolunteerHome";
 import VolunteerAllBloodDonationRequests from "../pages/Volunteer/AllBloodDonationRequests/VolunteerAllBloodDonationRequests";
 import VolunteerContentManagement from "../pages/Volunteer/ContentManagement/VolunteerContentManagement";
+import SearchDonors from "../pages/Search/Search";
 
 const routes = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const routes = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
+      },
+      {
+        path: "/search",
+        element: <SearchDonors />,
       },
     ],
   },

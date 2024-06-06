@@ -20,13 +20,13 @@ const Register = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("districts.json")
+    fetch("/districts.json")
       .then((res) => res.json())
       .then((data) => setDistricts(data));
   }, []);
 
   useEffect(() => {
-    fetch("upazilas.json")
+    fetch("/upazilas.json")
       .then((res) => res.json())
       .then((data) => setUpazilas(data));
   }, []);

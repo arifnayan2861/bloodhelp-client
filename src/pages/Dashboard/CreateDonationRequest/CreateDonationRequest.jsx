@@ -42,6 +42,7 @@ const CreateDonationRequest = () => {
       requesterName: userInfo.name,
       requesterEmail: userInfo.email,
       recipientName: data.recipientName,
+      bloodGroup: data.bloodGroup,
       recipientDistrict: data.recipientDistrict,
       recipientUpazila: data.recipientUpazila,
       hospitalName: data.hospitalName,
@@ -117,6 +118,29 @@ const CreateDonationRequest = () => {
           />
           {errors.recipientName && (
             <span className="text-red-600">Recipient Name is required</span>
+          )}
+        </div>
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Blood Group</span>
+          </label>
+          <select
+            {...register("bloodGroup")}
+            className="select w-full input-bordered"
+          >
+            <option value="">Select your District</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+          {errors.bloodGroup && (
+            <span className="text-red-600">Recipient District is required</span>
           )}
         </div>
 
