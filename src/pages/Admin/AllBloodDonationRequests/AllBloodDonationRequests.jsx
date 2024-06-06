@@ -1,36 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { PiDotsThreeCircle } from "react-icons/pi";
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+
 import useAuth from "../../../hooks/useAuth";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
-import { useQuery } from "@tanstack/react-query";
 
 const AllBloodDonationRequests = () => {
   const { user } = useAuth();
   const axiosPublic = useAxiosPublic();
-  //   const navigate = useNavigate();
-  const [donationRequests, setDonationRequests] = useState([]);
-  //   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [dropdownVisible, setDropdownVisible] = useState({});
+  const [actionsDropdownVisible, setActionsDropdownVisible] = useState({});
 
-  const { data: requests = [], refetch } = useQuery({
-    queryKey: ["donationRequests", user?.email],
+  const { data, refetch, isLoading } = useQuery({
+    queryKey: ["allDonationRequests", user?.email],
     queryFn: async () => {
       const res = await axiosPublic.get("/donation-requests");
       return res.data;
     },
-    onSuccess: (data) => {
-      setDonationRequests(data.slice(0, 3));
-    },
   });
 
-  useEffect(() => {
-    axiosPublic
-      .get(`/donation-requests/${user?.email}`)
-      .then((res) => setDonationRequests(res.data))
-      .catch((err) => console.log(err));
-  }, [axiosPublic, user]);
+  const toggleDropdown = (id) => {
+    setDropdownVisible((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleActionsDropdown = (id) => {
+    setActionsDropdownVisible((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/dashboard/edit-donation-request/${id}`);
+  };
+
+  const handleView = (id) => {
+    navigate(`/dashboard/view-donation-request/${id}`);
+  };
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -44,96 +51,146 @@ const AllBloodDonationRequests = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const res = await axiosPublic.delete(`/donation-request/${id}`);
-        if (res.data.deletedCount > 0) {
+
+        if (res.status === 200) {
+          toast.success("Request deleted successfully!");
           refetch();
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your request has been deleted.",
-            icon: "success",
-          });
-          //   toast.success("Request deleted successfully!");
         }
-        console.log(res);
       }
     });
   };
+
+  const handleStatusUpdate = (id, status) => {
+    // Add status update logic here
+    console.log(`Updating status of request with id: ${id} to ${status}`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Welcome, {user?.displayName}!</h1>
 
-      {donationRequests.length > 0 && (
+      {data.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold mb-4">
             Your Recent Donation Requests
           </h2>
-          <table className="min-w-full bg-white">
-            <thead>
-              <tr>
-                <th className="py-2">Recipient Name</th>
-                <th className="py-2">Location</th>
-                <th className="py-2">Donation Date</th>
-                <th className="py-2">Donation Time</th>
-                <th className="py-2">Status</th>
-                <th className="py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {donationRequests.map((request) => (
-                <tr key={request._id} className="border-t">
-                  <td className="py-2">{request.recipientName}</td>
-                  <td className="py-2">
-                    {request.recipientDistrict}, {request.recipientUpazila}
-                  </td>
-                  <td className="py-2">
-                    {new Date(request.donationDate).toLocaleDateString()}
-                  </td>
-                  <td className="py-2">{request.donationTime}</td>
-                  <td className="py-2">{request.status}</td>
-                  <td className="py-2 space-x-2">
-                    {request.status === "inprogress" && (
-                      <>
-                        <button
-                          className="btn btn-success"
-                          //   onClick={() =>
-                          //     handleUpdateStatus(request._id, "done")
-                          //   }
-                        >
-                          Done
-                        </button>
-                        <button
-                          className="btn btn-danger"
-                          //   onClick={() =>
-                          //     handleUpdateStatus(request._id, "canceled")
-                          //   }
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    )}
-                    <button
-                      className="btn btn-warning"
-                      //   onClick={() => handleEdit(request._id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-error"
-                      onClick={() => handleDelete(request._id)}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="btn btn-info"
-                      //   onClick={() => handleView(request._id)}
-                    >
-                      View
-                    </button>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="table">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Recipient Name</th>
+                  <th>Location</th>
+                  <th>Donation Date</th>
+                  <th>Donation Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {data.map((request, index) => (
+                  <tr key={request._id} className="border-t">
+                    <td>{index + 1}</td>
+                    <td className="py-2">{request.recipientName}</td>
+                    <td className="py-2">
+                      {request.recipientDistrict}, {request.recipientUpazila}
+                    </td>
+                    <td className="py-2">
+                      {new Date(request.donationDate).toLocaleDateString()}
+                    </td>
+                    <td className="py-2">{request.donationTime}</td>
+                    <td className="py-2 flex items-center gap-3">
+                      {request.status}{" "}
+                      {request.status === "inprogress" && (
+                        <PiDotsThreeCircle
+                          size={30}
+                          className="cursor-pointer"
+                          onClick={() => toggleDropdown(request._id)}
+                        />
+                      )}
+                    </td>
+                    <td className="py-2 space-x-2">
+                      {request.status === "inprogress" && (
+                        <div className="relative inline-block text-left">
+                          {/* <PiDotsThreeCircle
+                            size={30}
+                            className="cursor-pointer"
+                            onClick={() => toggleDropdown(request._id)}
+                          /> */}
+                          {dropdownVisible[request._id] && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() =>
+                                  handleStatusUpdate(request._id, "done")
+                                }
+                              >
+                                Done
+                              </button>
+                              <button
+                                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                onClick={() =>
+                                  handleStatusUpdate(request._id, "canceled")
+                                }
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="relative inline-block text-left">
+                        <PiDotsThreeCircle
+                          size={30}
+                          className="cursor-pointer"
+                          onClick={() => toggleActionsDropdown(request._id)}
+                        />
+                        {actionsDropdownVisible[request._id] && (
+                          <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleEdit(request._id)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleDelete(request._id)}
+                            >
+                              Delete
+                            </button>
+                            <button
+                              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              onClick={() => handleView(request._id)}
+                            >
+                              View
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4">
+            <button
+              className="btn btn-primary"
+              onClick={() => navigate("/dashboard/my-donation-requests")}
+            >
+              View My All Requests
+            </button>
+          </div>
         </div>
       )}
     </div>
