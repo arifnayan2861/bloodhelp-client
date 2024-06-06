@@ -9,9 +9,10 @@ const Navbar = () => {
   const { user, logoutUser } = useAuth();
   const axiosPublic = useAxiosPublic();
   const [dropdown, setDropdown] = useState(false);
+  // const [userInfo, setUserInfo] = useState({});
 
   const { data: userInfo, isLoading } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["userInfo"],
     queryFn: async () => {
       const res = await axiosPublic.get(`/user/${user?.email}`);
       return res.data;
@@ -40,7 +41,6 @@ const Navbar = () => {
       .then(() => {})
       .catch((error) => console.log(error));
   };
-  // console.log(dropdown);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center">

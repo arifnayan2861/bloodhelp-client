@@ -51,7 +51,7 @@ const CreateDonationRequest = () => {
       requestMessage: data.requestMessage,
       status: "pending",
     };
-    console.log(donationRequest);
+    // console.log(donationRequest);
 
     try {
       const res = await axiosPublic.post(

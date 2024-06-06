@@ -23,7 +23,7 @@ const Dashboard = () => {
   const axiosPublic = useAxiosPublic();
 
   const { data: userInfo, isLoading } = useQuery({
-    queryKey: ["user"],
+    queryKey: ["singleUserInfo", user?.email],
     queryFn: async () => {
       const res = await axiosPublic.get(`/user/${user?.email}`);
       return res.data;
