@@ -21,6 +21,8 @@ import VolunteerHome from "../pages/Volunteer/VolunteerHome/VolunteerHome";
 import VolunteerAllBloodDonationRequests from "../pages/Volunteer/AllBloodDonationRequests/VolunteerAllBloodDonationRequests";
 import VolunteerContentManagement from "../pages/Volunteer/ContentManagement/VolunteerContentManagement";
 import SearchDonors from "../pages/Search/Search";
+import DonationRequests from "../pages/DonationRequests/DonationRequests";
+import DonationDetails from "../pages/DonationDetails/DonationDetails";
 
 const routes = createBrowserRouter([
   {
@@ -42,6 +44,18 @@ const routes = createBrowserRouter([
       {
         path: "/search",
         element: <SearchDonors />,
+      },
+      {
+        path: "/request-donation",
+        element: <DonationRequests />,
+      },
+      {
+        path: "/view-details/:id",
+        element: (
+          <PrivateRoute>
+            <DonationDetails />
+          </PrivateRoute>
+        ),
       },
     ],
   },
