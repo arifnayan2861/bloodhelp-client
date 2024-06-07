@@ -23,6 +23,8 @@ import VolunteerContentManagement from "../pages/Volunteer/ContentManagement/Vol
 import SearchDonors from "../pages/Search/Search";
 import DonationRequests from "../pages/DonationRequests/DonationRequests";
 import DonationDetails from "../pages/DonationDetails/DonationDetails";
+import Blogs from "../pages/Blogs/Blogs";
+import BlogDetails from "../pages/BlogDetails/BlogDetails";
 
 const routes = createBrowserRouter([
   {
@@ -56,6 +58,14 @@ const routes = createBrowserRouter([
             <DonationDetails />
           </PrivateRoute>
         ),
+      },
+      {
+        path: "/blogs",
+        element: <Blogs />,
+      },
+      {
+        path: "/blogs/:id",
+        element: <BlogDetails />,
       },
     ],
   },
