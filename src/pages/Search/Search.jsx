@@ -17,6 +17,7 @@ import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const fetchDonors = async ({ queryKey }) => {
   const [, params] = queryKey;
+  console.log(params);
   const res = await axios.get("/search-donors", { params });
   return res.data;
 };
@@ -154,7 +155,7 @@ const SearchDonors = () => {
                 </tr>
               </thead>
               <tbody>
-                {searchResults.map((donor) => (
+                {searchResults?.map((donor) => (
                   <tr key={donor.id}>
                     <td>{donor.name}</td>
                     <td>{donor.bloodGroup}</td>
