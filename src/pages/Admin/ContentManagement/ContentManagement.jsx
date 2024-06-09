@@ -3,11 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const ContentManagement = () => {
   const navigate = useNavigate();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const [filter, setFilter] = useState("all");
 
   const {
@@ -17,14 +17,14 @@ const ContentManagement = () => {
   } = useQuery({
     queryKey: ["blogs", filter],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/blogs?status=${filter}`);
+      const res = await axiosSecure.get(`/blogs?status=${filter}`);
       return res.data;
     },
   });
 
   const updateBlogStatus = async (id, status) => {
     try {
-      await axiosPublic.patch(`/blogs/status/${id}`, { status });
+      await axiosSecure.patch(`/blogs/status/${id}`, { status });
       toast.success(
         `Blog ${
           status === "published" ? "published" : "unpublished"
@@ -38,7 +38,7 @@ const ContentManagement = () => {
 
   const deleteBlog = async (id) => {
     try {
-      await axiosPublic.delete(`/blogs/${id}`);
+      await axiosSecure.delete(`/blogs/${id}`);
       toast.success("Blog deleted successfully");
       refetch();
     } catch (error) {
