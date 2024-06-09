@@ -1,25 +1,32 @@
 import { useEffect, useState } from "react";
-import { FaUser } from "react-icons/fa";
+import { FaMoneyCheck, FaUser } from "react-icons/fa";
 import { MdBloodtype } from "react-icons/md";
 
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 
 const AdminHome = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const [users, setUsers] = useState([]);
   const [donationRequests, setDonationRequests] = useState([]);
+  const [funds, setFunds] = useState([]);
 
   useEffect(() => {
-    axiosPublic.get("/users").then((res) => setUsers(res.data));
-  }, [axiosPublic]);
+    axiosSecure.get("/users").then((res) => setUsers(res.data));
+  }, [axiosSecure]);
 
   useEffect(() => {
-    axiosPublic
+    axiosSecure
       .get("/donation-requests")
       .then((res) => setDonationRequests(res.data));
-  }, [axiosPublic]);
+  }, [axiosSecure]);
+
+  useEffect(() => {
+    axiosSecure.get("/get-funds").then((res) => setFunds(res.data));
+  }, [axiosSecure]);
+
+  const totalFunds = funds.reduce((total, item) => total + item.amount, 0);
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -46,6 +53,17 @@ const AdminHome = () => {
             </h1>
             <p className="text-xl font-semibold text-gray-700">
               {donationRequests.length}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center p-6 bg-white rounded-lg shadow-lg border border-gray-200">
+          <FaMoneyCheck size={50} className="text-green-500" />
+          <div className="ml-6">
+            <h1 className="text-2xl font-semibold text-gray-800">
+              Total Funding
+            </h1>
+            <p className="text-xl font-semibold text-gray-700">
+              {totalFunds} USD
             </p>
           </div>
         </div>

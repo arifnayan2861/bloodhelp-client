@@ -36,7 +36,7 @@ const UserHome = () => {
   };
 
   const handleView = (id) => {
-    navigate(`/dashboard/view-donation-request/${id}`);
+    navigate(`/view-details/${id}`);
   };
 
   const handleDelete = (id) => {

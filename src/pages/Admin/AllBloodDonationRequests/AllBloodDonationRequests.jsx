@@ -3,22 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { PiDotsThreeCircle } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
-
-import useAuth from "../../../hooks/useAuth";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import toast from "react-hot-toast";
 
-const AllBloodDonationRequests = () => {
-  const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+// import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+
+const MyDonationRequest = () => {
+  // const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState({});
   const [actionsDropdownVisible, setActionsDropdownVisible] = useState({});
+  const [filter, setFilter] = useState("all");
 
   const { data, refetch, isLoading } = useQuery({
-    queryKey: ["allDonationRequests", user?.email],
+    queryKey: ["userDonationRequests", filter],
     queryFn: async () => {
-      const res = await axiosPublic.get("/donation-requests");
+      const res = await axiosSecure.get(`/donation-requests/?status=${filter}`);
       return res.data;
     },
   });
@@ -36,7 +37,7 @@ const AllBloodDonationRequests = () => {
   };
 
   const handleView = (id) => {
-    navigate(`/dashboard/view-donation-request/${id}`);
+    navigate(`/view-details/${id}`);
   };
 
   const handleDelete = (id) => {
@@ -50,7 +51,7 @@ const AllBloodDonationRequests = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await axiosPublic.delete(`/donation-request/${id}`);
+        const res = await axiosSecure.delete(`/donation-request/${id}`);
 
         if (res.status === 200) {
           toast.success("Request deleted successfully!");
@@ -60,9 +61,14 @@ const AllBloodDonationRequests = () => {
     });
   };
 
-  const handleStatusUpdate = (id, status) => {
-    // Add status update logic here
-    console.log(`Updating status of request with id: ${id} to ${status}`);
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await axiosSecure.patch(`/donation/status/${id}`, { status });
+      refetch();
+      toast.success("Donation status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update donation status");
+    }
   };
 
   if (isLoading) {
@@ -75,16 +81,25 @@ const AllBloodDonationRequests = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Welcome, {user?.displayName}!</h1>
+      <div className="flex justify-end">
+        <select
+          className="select"
+          onChange={(e) => setFilter(e.target.value)}
+          value={filter}
+        >
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="inprogress">In-progress</option>
+          <option value="done">Done</option>
+          <option value="canceled">Canceled</option>
+        </select>
+      </div>
 
       {data.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">
-            Your Recent Donation Requests
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">All Donation Requests</h2>
           <div className="overflow-x-auto">
             <table className="table">
-              {/* head */}
               <thead>
                 <tr>
                   <th></th>
@@ -121,11 +136,6 @@ const AllBloodDonationRequests = () => {
                     <td className="py-2 space-x-2">
                       {request.status === "inprogress" && (
                         <div className="relative inline-block text-left">
-                          {/* <PiDotsThreeCircle
-                            size={30}
-                            className="cursor-pointer"
-                            onClick={() => toggleDropdown(request._id)}
-                          /> */}
                           {dropdownVisible[request._id] && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
                               <button
@@ -183,18 +193,10 @@ const AllBloodDonationRequests = () => {
               </tbody>
             </table>
           </div>
-          <div className="mt-4">
-            <button
-              className="btn btn-primary"
-              onClick={() => navigate("/dashboard/my-donation-requests")}
-            >
-              View My All Requests
-            </button>
-          </div>
         </div>
       )}
     </div>
   );
 };
 
-export default AllBloodDonationRequests;
+export default MyDonationRequest;
