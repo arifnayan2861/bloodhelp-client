@@ -3,22 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { PiDotsThreeCircle } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 import useAuth from "../../../hooks/useAuth";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
-import toast from "react-hot-toast";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const MyDonationRequest = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState({});
   const [actionsDropdownVisible, setActionsDropdownVisible] = useState({});
+  const [filter, setFilter] = useState("all");
 
   const { data, refetch, isLoading } = useQuery({
-    queryKey: ["userDonationRequests", user?.email],
+    queryKey: ["userDonationRequests", filter],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/donation-requests/${user?.email}`);
+      const res = await axiosSecure.get(
+        `/donation-requests/${user?.email}?status=${filter}`
+      );
       return res.data;
     },
   });
@@ -50,8 +53,8 @@ const MyDonationRequest = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await axiosPublic.delete(`/donation-request/${id}`);
-        console.log(res);
+        const res = await axiosSecure.delete(`/donation-request/${id}`);
+
         if (res.status === 200) {
           toast.success("Request deleted successfully!");
           refetch();
@@ -60,9 +63,14 @@ const MyDonationRequest = () => {
     });
   };
 
-  const handleStatusUpdate = (id, status) => {
-    // Add status update logic here
-    console.log(`Updating status of request with id: ${id} to ${status}`);
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await axiosSecure.patch(`/donation/status/${id}`, { status });
+      refetch();
+      toast.success("Donation status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update donation status");
+    }
   };
 
   if (isLoading) {
@@ -75,12 +83,25 @@ const MyDonationRequest = () => {
 
   return (
     <div className="container mx-auto p-4">
+      <div className="flex justify-end">
+        <select
+          className="select"
+          onChange={(e) => setFilter(e.target.value)}
+          value={filter}
+        >
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="inprogress">In-progress</option>
+          <option value="done">Done</option>
+          <option value="canceled">Canceled</option>
+        </select>
+      </div>
+
       {data.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">My Donation Requests</h2>
+          <h2 className="text-xl font-semibold mb-4">All Donation Requests</h2>
           <div className="overflow-x-auto">
             <table className="table">
-              {/* head */}
               <thead>
                 <tr>
                   <th></th>
@@ -117,11 +138,6 @@ const MyDonationRequest = () => {
                     <td className="py-2 space-x-2">
                       {request.status === "inprogress" && (
                         <div className="relative inline-block text-left">
-                          {/* <PiDotsThreeCircle
-                            size={30}
-                            className="cursor-pointer"
-                            onClick={() => toggleDropdown(request._id)}
-                          /> */}
                           {dropdownVisible[request._id] && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
                               <button

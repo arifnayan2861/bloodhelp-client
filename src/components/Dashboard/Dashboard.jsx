@@ -104,7 +104,16 @@ const Dashboard = () => {
             }`}
           />
         </div>
-        <ul className="pt-6">
+        <div className="pt-6">
+          <DashBoardMenu
+            path="/dashboard/profile"
+            logo=<FaUser />
+            title="Profile"
+            open={open}
+          />
+        </div>
+        <div className="divider"></div>
+        <ul>
           {userInfo.role === "admin"
             ? adminMenu.map((menu, index) => (
                 <DashBoardMenu

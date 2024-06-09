@@ -1,36 +1,9 @@
-// import { useQuery } from "@tanstack/react-query";
-// import useAxiosPublic from "../../../hooks/useAxiosPublic";
-
-// const ContentManagement = () => {
-//     const axiosPublic = useAxiosPublic();
-//     const { data: blogs = [] } = useQuery({
-//         queryKey: ["blogs"],
-//         queryFn: async () => {
-//           const res = await axiosPublic.get("blogs");
-//           return res.data;
-//         }
-//       });
-//   return (
-//     <div>
-//       <div className="flex justify-end">
-//         <button className="btn">Add Blog</button>
-//       </div>
-//       <div>
-// {
-//     blogs
-// }
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ContentManagement;
-
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import toast from "react-hot-toast";
+
+import useAxiosPublic from "../../../hooks/useAxiosPublic";
 
 const ContentManagement = () => {
   const navigate = useNavigate();

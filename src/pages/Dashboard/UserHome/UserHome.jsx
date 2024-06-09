@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { PiDotsThreeCircle } from "react-icons/pi";
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 import useAuth from "../../../hooks/useAuth";
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
-import toast from "react-hot-toast";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const UserHome = () => {
   const { user } = useAuth();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const [dropdownVisible, setDropdownVisible] = useState({});
   const [actionsDropdownVisible, setActionsDropdownVisible] = useState({});
@@ -18,7 +18,7 @@ const UserHome = () => {
   const { data, refetch, isLoading } = useQuery({
     queryKey: ["userDonationRequests", user?.email],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/donation-requests/${user?.email}`);
+      const res = await axiosSecure.get(`/donation-requests/${user?.email}`);
       return res.data;
     },
   });
@@ -50,7 +50,7 @@ const UserHome = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await axiosPublic.delete(`/donation-request/${id}`);
+        const res = await axiosSecure.delete(`/donation-request/${id}`);
 
         if (res.status === 200) {
           toast.success("Request deleted successfully!");
@@ -60,9 +60,14 @@ const UserHome = () => {
     });
   };
 
-  const handleStatusUpdate = (id, status) => {
-    // Add status update logic here
-    console.log(`Updating status of request with id: ${id} to ${status}`);
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await axiosSecure.patch(`/donation/status/${id}`, { status });
+      refetch();
+      toast.success("Donation status updated successfully");
+    } catch (error) {
+      toast.error("Failed to update donation status");
+    }
   };
 
   if (isLoading) {
@@ -121,11 +126,6 @@ const UserHome = () => {
                     <td className="py-2 space-x-2">
                       {request.status === "inprogress" && (
                         <div className="relative inline-block text-left">
-                          {/* <PiDotsThreeCircle
-                            size={30}
-                            className="cursor-pointer"
-                            onClick={() => toggleDropdown(request._id)}
-                          /> */}
                           {dropdownVisible[request._id] && (
                             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-20">
                               <button
