@@ -4,7 +4,7 @@ import { useState } from "react";
 import JoditEditor from "jodit-react";
 import toast from "react-hot-toast";
 
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const AddBlog = () => {
   const {
@@ -13,7 +13,7 @@ const AddBlog = () => {
     formState: { errors },
   } = useForm();
   const [content, setContent] = useState("");
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
@@ -26,7 +26,7 @@ const AddBlog = () => {
     };
 
     try {
-      await axiosPublic.post("/blogs", blog);
+      await axiosSecure.post("/blogs", blog);
       toast.success("Blog created successfully");
       navigate("/dashboard/content-management");
     } catch (error) {
