@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const EditDonationRequest = () => {
   const navigate = useNavigate();
@@ -17,14 +17,14 @@ const EditDonationRequest = () => {
     formState: { errors },
   } = useForm();
   const { id } = useParams();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   useEffect(() => {
-    axiosPublic
+    axiosSecure
       .get(`/edit-donation-request/${id}`)
       .then((res) => setDonationRequest(res.data))
       .catch((err) => console.log(err));
-  }, [axiosPublic, id]);
+  }, [axiosSecure, id]);
 
   useEffect(() => {
     fetch("/districts.json")
@@ -39,7 +39,6 @@ const EditDonationRequest = () => {
   }, []);
 
   useEffect(() => {
-    // Set form values when donationRequest is updated
     if (donationRequest) {
       setValue("recipientName", donationRequest.recipientName);
       setValue("recipientDistrict", donationRequest.recipientDistrict);
@@ -63,15 +62,14 @@ const EditDonationRequest = () => {
       donationTime: data.donationTime,
       requestMessage: data.requestMessage,
     };
-    const res = await axiosPublic.patch(
+    const res = await axiosSecure.patch(
       `/edit-donation-request/${id}`,
       updatedRequest
     );
     if (res.data.modifiedCount > 0) {
       toast.success("Information updated successfully!");
-      navigate("/dashboard/my-donation-requests");
+      navigate("/dashboard/all-blood-donation-requests");
     }
-    // console.log(updatedRequest);
   };
 
   return (
@@ -216,210 +214,3 @@ const EditDonationRequest = () => {
 };
 
 export default EditDonationRequest;
-
-// import { useEffect, useState } from "react";
-// import useAxiosPublic from "../../../hooks/useAxiosPublic";
-// import { useParams } from "react-router-dom";
-// import toast from "react-hot-toast";
-
-// const EditDonationRequest = () => {
-//   const [donationRequest, setDonationRequest] = useState({});
-//   const [districts, setDistricts] = useState([]);
-//   const [upazilas, setUpazilas] = useState([]);
-//   const { id } = useParams();
-//   const axiosPublic = useAxiosPublic();
-
-//   const [formData, setFormData] = useState({
-//     recipientName: "",
-//     recipientDistrict: "",
-//     recipientUpazila: "",
-//     hospitalName: "",
-//     addressLine: "",
-//     donationDate: "",
-//     donationTime: "",
-//     requestMessage: "",
-//   });
-
-//   useEffect(() => {
-//     axiosPublic
-//       .get(`/edit-donation-request/${id}`)
-//       .then((res) => {
-//         setDonationRequest(res.data);
-//         setFormData({
-//           recipientName: res.data.recipientName,
-//           recipientDistrict: res.data.recipientDistrict,
-//           recipientUpazila: res.data.recipientUpazila,
-//           hospitalName: res.data.hospitalName,
-//           addressLine: res.data.addressLine,
-//           donationDate: res.data.donationDate,
-//           donationTime: res.data.donationTime,
-//           requestMessage: res.data.requestMessage,
-//         });
-//       })
-//       .catch((err) => console.log(err));
-//   }, [axiosPublic, id]);
-
-//   useEffect(() => {
-//     fetch("/districts.json")
-//       .then((res) => res.json())
-//       .then((data) => setDistricts(data));
-//   }, []);
-
-//   useEffect(() => {
-//     fetch("/upazilas.json")
-//       .then((res) => res.json())
-//       .then((data) => setUpazilas(data));
-//   }, []);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({
-//       ...formData,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleUpdate = async (e) => {
-//     e.preventDefault();
-//     const res = await axiosPublic.patch(
-//       `/edit-donation-request/${id}`,
-//       formData
-//     );
-//     if (res.data.modifiedCount > 0) {
-//       toast.success("Information updated successfully!");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <form onSubmit={handleUpdate} className="card-body">
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Recipient Name</span>
-//           </label>
-//           <input
-//             type="text"
-//             name="recipientName"
-//             value={formData.recipientName}
-//             onChange={handleChange}
-//             placeholder="Recipient Name"
-//             className="input input-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Recipient District</span>
-//           </label>
-//           <select
-//             name="recipientDistrict"
-//             value={formData.recipientDistrict}
-//             onChange={handleChange}
-//             className="select w-full input-bordered"
-//           >
-//             <option value="">Select your District</option>
-//             {districts.map((district) => (
-//               <option key={district.id} value={district.name}>
-//                 {district.name}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Recipient Upazila</span>
-//           </label>
-//           <select
-//             name="recipientUpazila"
-//             value={formData.recipientUpazila}
-//             onChange={handleChange}
-//             className="select w-full input-bordered"
-//           >
-//             <option value="">Select your Upazila</option>
-//             {upazilas.map((upazila) => (
-//               <option key={upazila.id} value={upazila.name}>
-//                 {upazila.name}
-//               </option>
-//             ))}
-//           </select>
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Hospital Name</span>
-//           </label>
-//           <input
-//             type="text"
-//             name="hospitalName"
-//             value={formData.hospitalName}
-//             onChange={handleChange}
-//             placeholder="Hospital Name"
-//             className="input input-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Full Address Line</span>
-//           </label>
-//           <input
-//             type="text"
-//             name="addressLine"
-//             value={formData.addressLine}
-//             onChange={handleChange}
-//             placeholder="Full Address Line"
-//             className="input input-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Donation Date</span>
-//           </label>
-//           <input
-//             type="date"
-//             name="donationDate"
-//             value={formData.donationDate}
-//             onChange={handleChange}
-//             className="input input-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Donation Time</span>
-//           </label>
-//           <input
-//             type="time"
-//             name="donationTime"
-//             value={formData.donationTime}
-//             onChange={handleChange}
-//             className="input input-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control">
-//           <label className="label">
-//             <span className="label-text">Request Message</span>
-//           </label>
-//           <textarea
-//             name="requestMessage"
-//             value={formData.requestMessage}
-//             onChange={handleChange}
-//             placeholder="Write your request message here"
-//             className="textarea textarea-bordered"
-//           />
-//         </div>
-
-//         <div className="form-control mt-6">
-//           <button type="submit" className="btn btn-primary">
-//             Update
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default EditDonationRequest;

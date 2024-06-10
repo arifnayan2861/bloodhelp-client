@@ -198,6 +198,14 @@ const routes = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "volunteer-content-management/add-blog",
+        element: (
+          <PrivateRoute>
+            <AddBlog />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

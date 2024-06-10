@@ -30,7 +30,9 @@ const VolunteerContentManagement = () => {
       <div className="flex justify-between items-center mb-4">
         <button
           className="btn"
-          onClick={() => navigate("/dashboard/content-management/add-blog")}
+          onClick={() =>
+            navigate("/dashboard/volunteer-content-management/add-blog")
+          }
         >
           Add Blog
         </button>

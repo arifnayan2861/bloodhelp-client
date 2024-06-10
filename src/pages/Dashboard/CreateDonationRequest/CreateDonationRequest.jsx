@@ -81,7 +81,7 @@ const CreateDonationRequest = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-xl font-semibold mb-4">All Donation Requests</h2>
+      <h2 className="text-xl font-semibold mb-4">Create Donation Request</h2>
       {userInfo.status === "blocked" ? (
         <></>
       ) : (

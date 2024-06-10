@@ -146,7 +146,7 @@ const Dashboard = () => {
           <div className="divider"></div>
           <DashBoardMenu path="/" logo=<FaHome /> title="Home" open={open} />
           <DashBoardMenu
-            path="/donation-requests"
+            path="/request-donation"
             logo=<FaHandHoldingDroplet />
             title="Donation Requests"
             open={open}
@@ -158,7 +158,7 @@ const Dashboard = () => {
             open={open}
           />
           <DashBoardMenu
-            path="/funding"
+            path="/fundings"
             logo=<FaMoneyCheck />
             title="Funding"
             open={open}

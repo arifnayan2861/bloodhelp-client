@@ -12,7 +12,6 @@ const BlogDetails = () => {
       return res.data;
     },
   });
-  console.log(data);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">

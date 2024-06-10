@@ -19,7 +19,6 @@ const CheckoutForm = () => {
 
   useEffect(() => {
     axiosSecure.post("/create-payment-intent", { fund: 50 }).then((res) => {
-      console.log(res.data.clientSecret);
       setClientSecret(res.data.clientSecret);
     });
   }, [axiosSecure]);
@@ -37,7 +36,7 @@ const CheckoutForm = () => {
       return;
     }
 
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
+    const { error } = await stripe.createPaymentMethod({
       type: "card",
       card,
     });
@@ -46,7 +45,6 @@ const CheckoutForm = () => {
       console.log("payment error", error);
       setError(error.message);
     } else {
-      console.log("payment method", paymentMethod);
       setError("");
     }
 
@@ -67,7 +65,6 @@ const CheckoutForm = () => {
     } else {
       console.log("payment intent", paymentIntent);
       if (paymentIntent.status === "succeeded") {
-        console.log("transaction id", paymentIntent.id);
         setTransactionId(paymentIntent.id);
 
         // now save the payment in the database
@@ -80,7 +77,6 @@ const CheckoutForm = () => {
         };
 
         const res = await axiosPublic.post("/fund", payment);
-        console.log("payment saved", res.data);
         if (res.data?.insertedId) {
           toast.success("Donation Successful!");
           navigate("/fundings");

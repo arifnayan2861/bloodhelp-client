@@ -1,29 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import useAxiosPublic from "../../hooks/useAxiosPublic";
 import { useState } from "react";
 import { MdCancel } from "react-icons/md";
-import useAuth from "../../hooks/useAuth";
-import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const DonationDetails = () => {
   const { user } = useAuth();
   const [modal, setModal] = useState(false);
   const { id } = useParams();
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const { register, handleSubmit } = useForm();
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["singleRequest"],
     queryFn: async () => {
-      const res = await axiosPublic.get(`/edit-donation-request/${id}`);
+      const res = await axiosSecure.get(`/edit-donation-request/${id}`);
       return res.data;
     },
   });
 
   const onSubmit = async () => {
     try {
-      await axiosPublic.patch(`/donation/status/${id}`, {
+      await axiosSecure.patch(`/donation/status/${id}`, {
         status: "inprogress",
       });
       setModal(false);

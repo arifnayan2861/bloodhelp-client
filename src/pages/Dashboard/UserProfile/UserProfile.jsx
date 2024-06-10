@@ -6,18 +6,16 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import useAuth from "../../../hooks/useAuth";
 import toast from "react-hot-toast";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const UserProfile = () => {
   const [disabledField, setDisabledField] = useState(true);
   const [districts, setDistricts] = useState([]);
   const [upazilas, setUpazilas] = useState([]);
   const { user } = useAuth();
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
 
   const {
     data: userInfo,
@@ -45,29 +43,42 @@ const UserProfile = () => {
       .then((data) => setUpazilas(data));
   }, []);
 
-  const handleUpdate = (data) => {
-    // const updatedUserInfo = {
-    //   name: data.name,
-    //   photoURL: data.photoURL,
-    //   bloodGroup: data.bloodGroup,
-    //   address: {
-    //     district: data.district,
-    //     upazila: data.upazila,
-    //   },
-    // };
-    // const updatedUser = await axiosPublic.patch(
-    //   `/user/${user?.email}`,
-    //   updatedUserInfo
-    // );
-    // console.log(updatedUser.data);
-    // if (updatedUser.data.modifiedCount > 0) {
-    //   // show success popup
-    //   // reset();
-    //   toast.success("User info updated successfully!");
-    // } else {
-    //   console.log("error");
-    // }
-    console.log("hello", data.name);
+  useEffect(() => {
+    // Set form values when donationRequest is updated
+    if (userInfo) {
+      setValue("name", userInfo.name);
+      setValue("photoURL", userInfo.photoURL);
+      setValue("email", userInfo.email);
+      setValue("bloodGroup", userInfo.bloodGroup);
+      setValue("district", userInfo.district);
+      setValue("upazila", userInfo.upazila);
+    }
+  }, [userInfo, setValue]);
+
+  const handleUpdate = async (data) => {
+    const updatedUserInfo = {
+      name: data.name,
+      photoURL: data.photoURL,
+      bloodGroup: data.bloodGroup,
+      address: {
+        district: data.district,
+        upazila: data.upazila,
+      },
+    };
+    const updatedUser = await axiosSecure.patch(
+      `/user/${user?.email}`,
+      updatedUserInfo
+    );
+    console.log(updatedUser.data);
+    if (updatedUser.data.modifiedCount > 0) {
+      // show success popup
+      // reset();
+      toast.success("User info updated successfully!");
+      setDisabledField(true);
+      refetch();
+    } else {
+      console.log("error");
+    }
   };
   if (isLoading) {
     return (
@@ -123,7 +134,7 @@ const UserProfile = () => {
             placeholder="email"
             className="input input-bordered"
             defaultValue={userInfo.email}
-            disabled
+            readOnly
           />
         </div>
 
@@ -193,7 +204,6 @@ const UserProfile = () => {
 
         <div className="form-control mt-6">
           <button
-            onClick={handleUpdate}
             disabled={disabledField}
             className="btn btn-primary"
             type="submit"

@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { PiDotsThreeCircle } from "react-icons/pi";
-
-import useAxiosPublic from "../../../hooks/useAxiosPublic";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+
 const AllUsers = () => {
-  const axiosPublic = useAxiosPublic();
+  const axiosSecure = useAxiosSecure();
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [filter, setFilter] = useState("all");
   const {
@@ -16,15 +16,14 @@ const AllUsers = () => {
   } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const res = await axiosPublic.get("/users");
+      const res = await axiosSecure.get("/users");
       return res.data;
     },
   });
-  //   console.log(users);
 
   const updateUserStatus = async (_id, status) => {
     try {
-      await axiosPublic.patch(`/user/status/${_id}`, { status });
+      await axiosSecure.patch(`/user/status/${_id}`, { status });
       toast.success("User status updated successfully");
       refetch();
     } catch (error) {
@@ -34,7 +33,7 @@ const AllUsers = () => {
 
   const updateUserRole = async (_id, role) => {
     try {
-      await axiosPublic.patch(`/user/role/${_id}`, { role });
+      await axiosSecure.patch(`/user/role/${_id}`, { role });
       toast.success("User role updated successfully");
       refetch();
     } catch (error) {
@@ -103,8 +102,6 @@ const AllUsers = () => {
                   <td>{user.role}</td>
                   <td>{user.status}</td>
                   <td
-                    // onClick={() => setDropdown(!dropdown)}
-                    // className="cursor-pointer"
                     onClick={() =>
                       setActiveDropdown(
                         activeDropdown === user._id ? null : user._id
@@ -113,11 +110,6 @@ const AllUsers = () => {
                     className="cursor-pointer relative"
                   >
                     <PiDotsThreeCircle size={30} />
-                    {/* {dropdown && (
-                      <div
-                        onClick={() => setDropdown(false)}
-                        className="bg-base-200 w-36 h-48 absolute top-2 z-10 rounded-lg"
-                      > */}
                     {activeDropdown === user._id && (
                       <div
                         onClick={() => setActiveDropdown(null)}
