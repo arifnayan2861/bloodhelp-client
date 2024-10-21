@@ -1,8 +1,32 @@
-# React + Vite
+# BloodHelp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a blood donation management system MERN website frontend, that consists of features such as,
 
-Currently, two official plugins are available:
+- Different roles such as(Admin, Donor, Volunteer)
+- User Dashboard
+- Donation request
+- Blog writing
+- Search functionality
+- Stripe payment gateway
+- Firebase authentication
+- Secured web browsing
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This website uses packages like,
+
+- React-router-dom
+- Tailwind CSS
+- Daisy UI
+- Swiper Slider
+- Firebase
+- React-hook-form
+- Tanstack-query
+- Stripe.js
+- Jodit-react
+- Axios
+
+Live site: https://bloodhelp-2024.web.app/
+
+#### Admin Role data
+
+E-mail: profile@admin.com
+Password: Abcdef!
